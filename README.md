@@ -6,6 +6,19 @@ A Clojure library designed to ... well, that part is up to you.
 
 FIXME
 
+## Development
+
+### Rloading Code
+
+```
+aws-cost-notifier.core=> (require '[clojure.tools.namespace.repl :refer [refresh]])
+nil
+
+aws-cost-notifier.core=> (refresh)
+:reloading (aws-cost-notifier.core aws-cost-notifier.core-test)
+:ok
+```
+
 ## License
 
 Copyright © 2023 FIXME
