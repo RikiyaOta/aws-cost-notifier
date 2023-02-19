@@ -60,9 +60,14 @@
   (let [f (fn [group] (not= (:amount group) "0"))]
     (filter f groups)))
 
+(defn- sort-groups-by-amount [groups]
+  (let [parse-amount (fn [group] (Double/parseDouble (:amount group)))]
+    (reverse (sort-by parse-amount groups))))
+
 #_{:clj-kondo/ignore [:unresolved-symbol]}
 (defun build-notification-message [{:time-period _ :groups groups}]
   (let [groups (select-groups groups)
+        groups (sort-groups-by-amount groups)
         max-length (get-max-service-length groups)
         format-group (gen-group-formatter max-length)
         formatted-groups (map format-group groups)]
