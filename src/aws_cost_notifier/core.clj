@@ -2,7 +2,8 @@
   (:require [clojure.string :as string]
             [amazonica.aws.costexplorer :as costexplorer]
             [clj-http.client :as client]
-            [defun.core :refer [defun]]))
+            [defun.core :refer [defun]]
+            [cheshire.core :as cheshire]))
 
 ; ---------- Get Data from AWS CostExplorer -------------
 
@@ -63,6 +64,14 @@
 (defn- sort-groups-by-amount [groups]
   (let [parse-amount (fn [group] (Double/parseDouble (:amount group)))]
     (reverse (sort-by parse-amount groups))))
+
+(defn- get-exchange-rate 
+  "Get JPY/USD rate."
+  []
+  (let [raw-rate-result (client/get "https://api.aoikujira.com/kawase/get.php?format=json&code=usd&to=JPY")
+        rate-result (cheshire/parse-string (:body raw-rate-result))
+        jpy-str (get rate-result "JPY")]
+    (Double/parseDouble jpy-str)))
 
 #_{:clj-kondo/ignore [:unresolved-symbol]}
 (defun build-notification-message [{:time-period _ :groups groups}]
