@@ -2,9 +2,24 @@
 
 A Clojure library designed to ... well, that part is up to you.
 
-## Usage
+## Environment Variables
 
-FIXME
+- AWS_PROFILE: Your AWS Profile Name. Use this value to call AWS API.
+- TARGET_AWS_ACCOUNT: Your AWS Account Name. Use this value only to build notification message.
+- INCOMING_WEBHOOK_URL: Slack Incoming Webhook URL.
+
+## Development
+
+### Rloading Code
+
+```
+aws-cost-notifier.core=> (require '[clojure.tools.namespace.repl :refer [refresh]])
+nil
+
+aws-cost-notifier.core=> (refresh)
+:reloading (aws-cost-notifier.core aws-cost-notifier.core-test)
+:ok
+```
 
 ## License
 
