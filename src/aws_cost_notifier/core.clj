@@ -54,8 +54,15 @@
 
 (defn gen-format-string [max-length] (str "%-" (+ max-length 1) "s"))
 
-(defn gen-group-formatter [max-length]
-  (fn [group] (str (format (gen-format-string max-length) (:service group)) ": " (:amount group) " USD")))
+(defn- to-jpy [usd-str rate-jpy-usd] 
+  (let [usd (Double/parseDouble usd-str)]
+    (* rate-jpy-usd usd)))
+
+(defn gen-group-formatter [max-length rate-jpy-usd]
+  (let [format-string (gen-format-string max-length)
+        format-service (fn [group] (format format-string (:service group)))
+        get-amount-by-jpy (fn [group] (to-jpy (:amount group) rate-jpy-usd))]
+    (fn [group] (str (format-service group) ": " (get-amount-by-jpy group) " JPY"))))
 
 (defn select-groups [groups]
   (let [f (fn [group] (not= (:amount group) "0"))]
@@ -65,7 +72,7 @@
   (let [parse-amount (fn [group] (Double/parseDouble (:amount group)))]
     (reverse (sort-by parse-amount groups))))
 
-(defn- get-exchange-rate 
+(defn- get-rate-jpy-usd 
   "Get JPY/USD rate."
   []
   (let [raw-rate-result (client/get "https://api.aoikujira.com/kawase/get.php?format=json&code=usd&to=JPY")
@@ -78,9 +85,10 @@
   (let [groups (select-groups groups)
         groups (sort-groups-by-amount groups)
         max-length (get-max-service-length groups)
-        format-group (gen-group-formatter max-length)
+        rate-jpy-usd (get-rate-jpy-usd )
+        format-group (gen-group-formatter max-length rate-jpy-usd)
         formatted-groups (map format-group groups)]
-    (str "```" (string/join "\n" formatted-groups) "```")))
+    (str "```" (string/join "\n" formatted-groups) "```\n JPY/USD = " rate-jpy-usd)))
 
 (defn get-url [] (System/getenv "INCOMING_WEBHOOK_URL"))
 
