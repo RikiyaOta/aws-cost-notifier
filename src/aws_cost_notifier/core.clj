@@ -12,10 +12,14 @@
 
 (def aws-credentials {:profile (get-aws-profile) :endpoint "ap-northeast-1"})
 
+(defn- today [] (.toString (java.time.LocalDate/now )))
+
+(defn- first-date [] (clojure.string/replace (today) #"\d{2}$" "01"))
+
 ; TODO: Get today dynamically.
 (def query-params {:granularity "MONTHLY"
                    :metrics ["NetUnblendedCost"]
-                   :time-period {:start "2023-02-01" :end "2023-02-28"}
+                   :time-period {:start (first-date) :end (today)}
                    :group-by [{:key "SERVICE" :type "DIMENSION"}]})
 
 (defn- get-groups [results-by-time]
