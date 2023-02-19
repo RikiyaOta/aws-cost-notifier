@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/tools.namespace "1.4.0"]
                  [amazonica "0.3.163"]
-                 [defun "0.3.1"]
                  [cheshire "5.11.0"]
                  [clj-http "3.12.3"]]
   :repl-options {:init-ns aws-cost-notifier.core}
